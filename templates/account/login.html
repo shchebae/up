@@ -1,0 +1,87 @@
+{% extends "account/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header text-center py-4">
+                <i class="bi bi-person-circle text-primary mb-3" style="font-size: 3rem;"></i>
+                <h1 class="h4 mb-0">Вход в систему</h1>
+            </div>
+            <div class="card-body p-4">
+                <form class="login" method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-500">{{ form.login.label }}</label>
+                        {% render_field form.login class="form-control" placeholder="Введите email или имя пользователя" %}
+                        {% if form.login.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.login.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-500">{{ form.password.label }}</label>
+                        {% render_field form.password class="form-control" placeholder="Введите пароль" %}
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {% render_field form.remember class="form-check-input" %}
+                            <label class="form-check-label" for="{{ form.remember.id_for_label }}">
+                                Запомнить меня
+                            </label>
+                        </div>
+                    </div>
+
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                    <div class="d-grid mb-4">
+                        <button class="btn btn-primary py-2" type="submit">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Войти
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center">
+                    <p class="mb-3">
+                        <a href="{% url 'account_reset_password' %}" class="text-decoration-none text-primary">
+                            <i class="bi bi-key me-1"></i>Забыли пароль?
+                        </a>
+                    </p>
+                    <p class="mb-0">
+                        Нет аккаунта? 
+                        <a href="{% url 'account_signup' %}" class="text-decoration-none text-primary">
+                            <i class="bi bi-person-plus me-1"></i>Зарегистрируйтесь
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

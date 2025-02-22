@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ request.title }}{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">{{ request.title }}</h1>
+                <span class="badge {% if request.status == 'new' %}bg-info{% elif request.status == 'in_progress' %}bg-warning{% elif request.status == 'resolved' %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ request.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="card-title">Описание</h5>
+                    <p class="card-text">{{ request.description }}</p>
+                    
+                    {% if request.photo %}
+                        <div class="mt-4">
+                            <h5>Прикрепленное фото</h5>
+                            <img src="{{ request.photo.url }}" alt="Фото к заявке" class="img-fluid rounded">
+                        </div>
+                    {% endif %}
+                    
+                    {% if request.status == 'rejected' and request.rejection_reason %}
+                        <div class="alert alert-danger mt-4">
+                            <h5>Причина отказа:</h5>
+                            <p>{{ request.rejection_reason }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Информация</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Категория:</strong> {{ request.category.name }}</li>
+                                <li><strong>Создано:</strong> {{ request.created_at|date:"d.m.Y H:i" }}</li>
+                                <li><strong>Автор:</strong> {{ request.user.username }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    {% if user.is_staff %}
+                        <div class="mt-4">
+                            <h5>Управление заявкой</h5>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {{ status_form.status.label_tag }}
+                                    {% render_field status_form.status class="form-select" %}
+                                </div>
+                                <div class="mb-3">
+                                    {{ status_form.rejection_reason.label_tag }}
+                                    {% render_field status_form.rejection_reason class="form-control" rows="3" %}
+                                </div>
+                                <button type="submit" class="btn btn-primary">Обновить статус</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'request_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+{% endblock %}

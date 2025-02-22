@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Список заявок{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col">
+            <h1>{% if user.is_staff %}Все заявки{% else %}Мои заявки{% endif %}</h1>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'request_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Создать новую заявку
+            </a>
+        </div>
+    </div>
+    
+    {% if requests %}
+        <div class="row">
+            {% for request in requests %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ request.title }}</h5>
+                            <p class="card-text">
+                                <span class="badge {% if request.status == 'new' %}bg-info{% elif request.status == 'in_progress' %}bg-warning{% elif request.status == 'resolved' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ request.get_status_display }}
+                                </span>
+                            </p>
+                            <p class="card-text"><small class="text-muted">Создано: {{ request.created_at|date:"d.m.Y H:i" }}</small></p>
+                            <p class="card-text"><small class="text-muted">Категория: {{ request.category.name }}</small></p>
+                            <a href="{% url 'request_detail' request.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Заявок пока нет.
+        </div>
+    {% endif %}
+{% endblock %}

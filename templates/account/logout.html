@@ -1,0 +1,37 @@
+{% extends "account/base.html" %}
+
+{% block title %}Выход{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header text-center py-4">
+                <i class="bi bi-box-arrow-right text-danger mb-3" style="font-size: 3rem;"></i>
+                <h1 class="h4 mb-0">Выход из системы</h1>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-center mb-4 text-secondary">
+                    <i class="bi bi-question-circle me-2"></i>
+                    Вы уверены, что хотите выйти?
+                </p>
+
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                    {% endif %}
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-danger py-2" type="submit">
+                            <i class="bi bi-box-arrow-right me-2"></i>Выйти
+                        </button>
+                        <a href="{% url 'request_list' %}" class="btn btn-outline-secondary py-2">
+                            <i class="bi bi-x-circle me-2"></i>Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
